@@ -32,4 +32,12 @@ end
 
 function love.update() end
 
-function love.draw() end
+function love.draw()
+	-- For conciseness
+	rectangle = love.graphics.rectangle
+
+	-- Draw individual snake blocks
+	for _, block in ipairs(snake) do
+		rectangle("fill", block.x, block.y, block_width, block_height)
+	end
+end
