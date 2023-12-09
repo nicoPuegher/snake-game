@@ -10,7 +10,15 @@ local rectangle
 -- Constants
 local SIZE = 20
 
-function love.load() end
+function love.load()
+	-- Get window size
+	window_width = love.graphics.getWidth()
+	window_height = love.graphics.getHeight()
+
+	-- Calculate the size of a single block of the snake's body
+	block_width = window_width / SIZE
+	block_height = window_height / SIZE
+end
 
 function love.update() end
 
