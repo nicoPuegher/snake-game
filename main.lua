@@ -2,7 +2,7 @@
 local window_width, window_height
 
 -- Player
-local snake, block_width, block_height
+local snake, block_width, block_height, direction
 
 -- Functions
 local rectangle
@@ -10,6 +10,7 @@ local rectangle
 -- Constants
 local SIZE = 20
 local INITIAL_SNAKE_SIZE = 3
+local SNAKE_SPEED = 0.15
 
 function love.load()
 	-- Get window size
@@ -28,6 +29,9 @@ function love.load()
 		snake_body.y = block_height
 		table.insert(snake, snake_body)
 	end
+
+	-- Initialize the snake's direction
+	direction = "right"
 end
 
 function love.update() end
