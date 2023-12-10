@@ -53,6 +53,12 @@ function love.update(dt)
 		-- Move the new snake head based on the current direction
 		if direction == "right" then
 			snake_head.x = snake_head.x + block_width
+		elseif direction == "left" then
+			snake_head.x = snake_head.x - block_width
+		elseif direction == "up" then
+			snake_head.y = snake_head.y - block_height
+		elseif direction == "down" then
+			snake_head.y = snake_head.y + block_height
 		end
 
 		-- Insert the new snake head and remove the tail
