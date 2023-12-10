@@ -2,7 +2,7 @@
 local window_width, window_height
 
 -- Player
-local snake, block_width, block_height, direction
+local snake, block_size, direction
 
 -- Game
 local timer
@@ -11,26 +11,25 @@ local timer
 local rectangle
 
 -- Constants
-local SIZE = 20
+local WINDOW_DIMENSION = 700
+local WINDOW_BLOCK = 20
 local INITIAL_SNAKE_SIZE = 3
 local SNAKE_SPEED = 9
-local DURATION = 1 / SNAKE_SPEED
+local DELAY_DURATION = 1 / SNAKE_SPEED
 
 function love.load()
-	-- Get window size
-	window_width = love.graphics.getWidth()
-	window_height = love.graphics.getHeight()
+	-- Set the window's size
+	love.window.setMode(WINDOW_DIMENSION, WINDOW_DIMENSION)
 
 	-- Calculate the size of a single block of the snake's body
-	block_width = window_width / SIZE
-	block_height = window_height / SIZE
+	block_size = WINDOW_DIMENSION / WINDOW_BLOCK
 
 	-- Initialize the snake's body
 	snake = {}
 	for i = 1, INITIAL_SNAKE_SIZE do
 		local snake_body = {}
-		snake_body.x = block_width * i
-		snake_body.y = block_height
+		snake_body.x = block_size * i
+		snake_body.y = block_size
 		table.insert(snake, snake_body)
 	end
 
@@ -46,19 +45,19 @@ function love.update(dt)
 	timer = timer + dt
 
 	-- When the timer exceedes the duration, there is room for an update
-	while timer >= DURATION do
+	while timer >= DELAY_DURATION do
 		-- Create a new snake head
 		local snake_head = { x = snake[#snake].x, y = snake[#snake].y }
 
 		-- Move the new snake head based on the current direction
 		if direction == "right" then
-			snake_head.x = snake_head.x + block_width
+			snake_head.x = snake_head.x + block_size
 		elseif direction == "left" then
-			snake_head.x = snake_head.x - block_width
+			snake_head.x = snake_head.x - block_size
 		elseif direction == "up" then
-			snake_head.y = snake_head.y - block_height
+			snake_head.y = snake_head.y - block_size
 		elseif direction == "down" then
-			snake_head.y = snake_head.y + block_height
+			snake_head.y = snake_head.y + block_size
 		end
 
 		-- Insert the new snake head and remove the tail
@@ -66,7 +65,7 @@ function love.update(dt)
 		table.remove(snake, 1)
 
 		-- Substract one frame from the accumulated time
-		timer = timer - DURATION
+		timer = timer - DELAY_DURATION
 	end
 end
 
@@ -76,7 +75,7 @@ function love.draw()
 
 	-- Draw individual snake blocks
 	for _, block in ipairs(snake) do
-		rectangle("fill", block.x, block.y, block_width, block_height)
+		rectangle("fill", block.x, block.y, block_size, block_size)
 	end
 end
 
