@@ -34,7 +34,18 @@ function love.load()
 	direction = "right"
 end
 
-function love.update() end
+function love.update()
+	local snake_head = { x = snake[#snake].x, y = snake[#snake].y }
+
+	love.timer.sleep(SNAKE_SPEED)
+
+	if direction == "right" then
+		snake_head.x = snake_head.x + block_width
+	end
+
+	table.insert(snake, snake_head)
+	table.remove(snake, 1)
+end
 
 function love.draw()
 	-- For conciseness
