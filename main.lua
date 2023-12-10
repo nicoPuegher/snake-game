@@ -79,3 +79,16 @@ function love.draw()
 		rectangle("fill", block.x, block.y, block_width, block_height)
 	end
 end
+
+function love.keypressed(key)
+	-- Player inputs
+	if key == "right" and direction ~= "left" then
+		direction = "right"
+	elseif key == "left" and direction ~= "right" then
+		direction = "left"
+	elseif key == "up" and direction ~= "down" then
+		direction = "up"
+	elseif key == "down" and direction ~= "up" then
+		direction = "down"
+	end
+end
