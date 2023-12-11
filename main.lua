@@ -1,6 +1,3 @@
--- Window/screen
-local window_width, window_height
-
 -- Player
 local snake, block_size, direction
 
@@ -16,6 +13,7 @@ local WINDOW_BLOCK = 20
 local INITIAL_SNAKE_SIZE = 3
 local SNAKE_SPEED = 9
 local DELAY_DURATION = 1 / SNAKE_SPEED
+local MAP_EDGES = { start = 0, limit = WINDOW_DIMENSION }
 
 function love.load()
 	-- Set the window's size
@@ -51,12 +49,28 @@ function love.update(dt)
 
 		-- Move the new snake head based on the current direction
 		if direction == "right" then
+			-- Teleport the snake to the left side of the map
+			if snake_head.x == MAP_EDGES.limit then
+				snake_head.x = MAP_EDGES.start - block_size
+			end
 			snake_head.x = snake_head.x + block_size
 		elseif direction == "left" then
+			-- Teleport the snake to the right side of the map
+			if snake_head.x == MAP_EDGES.start then
+				snake_head.x = MAP_EDGES.limit
+			end
 			snake_head.x = snake_head.x - block_size
 		elseif direction == "up" then
+			-- Teleport the snake to the bottom side of the map
+			if snake_head.y == MAP_EDGES.start then
+				snake_head.y = MAP_EDGES.limit
+			end
 			snake_head.y = snake_head.y - block_size
 		elseif direction == "down" then
+			-- Teleport the snake to the top side of the map
+			if snake_head.y == MAP_EDGES.limit then
+				snake_head.y = MAP_EDGES.start - block_size
+			end
 			snake_head.y = snake_head.y + block_size
 		end
 
