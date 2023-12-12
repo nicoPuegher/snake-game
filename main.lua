@@ -49,29 +49,29 @@ function love.update(dt)
 
 		-- Move the new snake head based on the current direction
 		if direction == "right" then
+			snake_head.x = snake_head.x + block_size
 			-- Teleport the snake to the left side of the map
 			if snake_head.x == MAP_EDGES.limit then
-				snake_head.x = MAP_EDGES.start - block_size
+				snake_head.x = MAP_EDGES.start
 			end
-			snake_head.x = snake_head.x + block_size
 		elseif direction == "left" then
-			-- Teleport the snake to the right side of the map
-			if snake_head.x == MAP_EDGES.start then
-				snake_head.x = MAP_EDGES.limit
-			end
 			snake_head.x = snake_head.x - block_size
-		elseif direction == "up" then
-			-- Teleport the snake to the bottom side of the map
-			if snake_head.y == MAP_EDGES.start then
-				snake_head.y = MAP_EDGES.limit
+			-- Teleport the snake to the right side of the map
+			if snake_head.x == MAP_EDGES.start - block_size then
+				snake_head.x = MAP_EDGES.limit - block_size
 			end
+		elseif direction == "up" then
 			snake_head.y = snake_head.y - block_size
+			-- Teleport the snake to the bottom side of the map
+			if snake_head.y == MAP_EDGES.start - block_size then
+				snake_head.y = MAP_EDGES.limit - block_size
+			end
 		elseif direction == "down" then
+			snake_head.y = snake_head.y + block_size
 			-- Teleport the snake to the top side of the map
 			if snake_head.y == MAP_EDGES.limit then
-				snake_head.y = MAP_EDGES.start - block_size
+				snake_head.y = MAP_EDGES.start
 			end
-			snake_head.y = snake_head.y + block_size
 		end
 
 		-- Insert the new snake head and remove the tail
