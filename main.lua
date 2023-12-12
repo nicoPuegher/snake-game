@@ -1,15 +1,15 @@
 -- Player
-local snake, block_size, direction
+local snake, block_size, direction, food
 
 -- Game
 local timer
 
 -- Functions
-local rectangle
+local rectangle, random, generate_food
 
 -- Constants
 local WINDOW_DIMENSION = 700
-local WINDOW_BLOCK = 20
+local WINDOW_BLOCKS = 20
 local INITIAL_SNAKE_SIZE = 3
 local SNAKE_SPEED = 9
 local DELAY_DURATION = 1 / SNAKE_SPEED
@@ -20,7 +20,7 @@ function love.load()
 	love.window.setMode(WINDOW_DIMENSION, WINDOW_DIMENSION)
 
 	-- Calculate the size of a single block of the snake's body
-	block_size = WINDOW_DIMENSION / WINDOW_BLOCK
+	block_size = WINDOW_DIMENSION / WINDOW_BLOCKS
 
 	-- Initialize the snake's body
 	snake = {}
@@ -36,6 +36,10 @@ function love.load()
 
 	-- Initialize accumulative timer
 	timer = 0
+
+	-- Initialize the food
+	food = {}
+	generate_food()
 end
 
 function love.update(dt)
@@ -89,8 +93,13 @@ function love.draw()
 
 	-- Draw individual snake blocks
 	for _, block in ipairs(snake) do
+		love.graphics.setColor(1, 1, 1)
 		rectangle("fill", block.x, block.y, block_size, block_size)
 	end
+
+	-- Draw the food
+	love.graphics.setColor(0, 1, 0)
+	rectangle("fill", food.x, food.y, block_size, block_size)
 end
 
 function love.keypressed(key)
@@ -103,5 +112,23 @@ function love.keypressed(key)
 		direction = "up"
 	elseif key == "down" and direction ~= "up" then
 		direction = "down"
+	end
+end
+
+function generate_food()
+	-- For conciseness
+	random = love.math.random
+
+	-- Randomize a new location for the food
+	food.x = random(0, WINDOW_BLOCKS - 1)
+	food.y = random(0, WINDOW_BLOCKS - 1)
+	food.x = food.x * block_size
+	food.y = food.y * block_size
+
+	-- Prevent the new food to spawn on top of the snake
+	for _, block in ipairs(snake) do
+		if block.x == food.x and block.y == food.y then
+			generate_food()
+		end
 	end
 end
