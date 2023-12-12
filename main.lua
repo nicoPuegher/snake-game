@@ -5,7 +5,7 @@ local snake, block_size, direction, food
 local timer
 
 -- Functions
-local rectangle, random, generate_food
+local rectangle, random, generate_food, food_collision
 
 -- Constants
 local WINDOW_DIMENSION = 700
@@ -78,6 +78,9 @@ function love.update(dt)
 			end
 		end
 
+		-- Check for collisions between the snake and the food
+		food_collision(snake_head.x, snake_head.y)
+
 		-- Insert the new snake head and remove the tail
 		table.insert(snake, snake_head)
 		table.remove(snake, 1)
@@ -130,5 +133,15 @@ function generate_food()
 		if block.x == food.x and block.y == food.y then
 			generate_food()
 		end
+	end
+end
+
+function food_collision(x, y)
+	-- Make the snake bigger after eating the food
+	if x == food.x and y == food.y then
+		table.insert(snake, { x = -block_size * 2, y = -block_size * 2 })
+
+		-- Generate a new food with a different position
+		generate_food()
 	end
 end
