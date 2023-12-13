@@ -5,7 +5,7 @@ local snake, block_size, direction, food
 local timer
 
 -- Functions
-local rectangle, random, generate_food, food_collision
+local rectangle, random, generate_food, food_collision, snake_collision
 
 -- Constants
 local WINDOW_DIMENSION = 700
@@ -78,6 +78,9 @@ function love.update(dt)
 			end
 		end
 
+		-- Check for collisions between the snake head and itself
+		snake_collision(snake_head.x, snake_head.y)
+
 		-- Check for collisions between the snake and the food
 		food_collision(snake_head.x, snake_head.y)
 
@@ -143,5 +146,15 @@ function food_collision(x, y)
 
 		-- Generate a new food with a different position
 		generate_food()
+	end
+end
+
+function snake_collision(x, y)
+	-- Check if the snake hits itself
+	for _, block in ipairs(snake) do
+		if x == block.x and y == block.y then
+			-- Game over
+			love.event.quit("restart")
+		end
 	end
 end
