@@ -148,6 +148,8 @@ function love.keypressed(key)
 		direction = "up"
 	elseif key == "down" and direction ~= "up" then
 		direction = "down"
+	elseif key == "return" and game_over then
+		love.event.quit("restart")
 	end
 end
 
