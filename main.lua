@@ -2,7 +2,7 @@
 local snake, block_size, direction, food
 
 -- Game
-local timer
+local timer, game_over
 
 -- Functions
 local rectangle, random, generate_food, food_collision, snake_collision
@@ -40,6 +40,9 @@ function love.load()
 	-- Initialize the food
 	food = {}
 	generate_food()
+
+	-- Initialize the game
+	game_over = false
 end
 
 function love.update(dt)
@@ -97,15 +100,42 @@ function love.draw()
 	-- For conciseness
 	rectangle = love.graphics.rectangle
 
-	-- Draw individual snake blocks
-	for _, block in ipairs(snake) do
-		love.graphics.setColor(1, 1, 1)
-		rectangle("fill", block.x, block.y, block_size, block_size)
-	end
+	-- Display game over screen
+	if game_over then
+		-- Draw the game over title
+		love.graphics.setColor(1, 0, 0)
+		love.graphics.setFont(love.graphics.newFont(36))
+		love.graphics.printf(
+			"Game over, better luck next time!",
+			0,
+			WINDOW_DIMENSION / 2 - 50,
+			WINDOW_DIMENSION,
+			"center"
+		)
 
-	-- Draw the food
-	love.graphics.setColor(0, 1, 0)
-	rectangle("fill", food.x, food.y, block_size, block_size)
+		-- Draw the game over subtitle
+		love.graphics.setColor(1, 1, 1)
+		love.graphics.setFont(love.graphics.newFont(20))
+		love.graphics.printf(
+			"Please press Enter to restart and try again.",
+			0,
+			WINDOW_DIMENSION / 2 + 20,
+			WINDOW_DIMENSION,
+			"center"
+		)
+
+	-- Game is not over
+	else
+		-- Draw individual snake blocks
+		for _, block in ipairs(snake) do
+			love.graphics.setColor(1, 1, 1)
+			rectangle("fill", block.x, block.y, block_size, block_size)
+		end
+
+		-- Draw the food
+		love.graphics.setColor(0, 1, 0)
+		rectangle("fill", food.x, food.y, block_size, block_size)
+	end
 end
 
 function love.keypressed(key)
@@ -154,7 +184,7 @@ function snake_collision(x, y)
 	for _, block in ipairs(snake) do
 		if x == block.x and y == block.y then
 			-- Game over
-			love.event.quit("restart")
+			game_over = true
 		end
 	end
 end
