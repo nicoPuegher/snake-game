@@ -22,12 +22,12 @@ function love.load()
 	-- Calculate the size of a single block of the snake's body
 	block_size = WINDOW_DIMENSION / WINDOW_BLOCKS
 
-	-- Initialize the snake's body
+	-- Initialize the snake's body (head first, tale last)
 	snake = {}
-	for i = 1, INITIAL_SNAKE_SIZE do
+	for i = INITIAL_SNAKE_SIZE, 1, -1 do
 		local snake_body = {}
-		snake_body.x = block_size * i
-		snake_body.y = block_size
+		snake_body.x = block_size * (i - 1)
+		snake_body.y = block_size - block_size
 		table.insert(snake, snake_body)
 	end
 
