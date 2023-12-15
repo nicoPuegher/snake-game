@@ -5,7 +5,7 @@ local snake, block_size, direction, food
 local timer, game_over
 
 -- Functions
-local rectangle, random, generate_food, food_collision, snake_collision
+local random, generate_food, food_collision, snake_collision
 
 -- Constants
 local WINDOW_DIMENSION = 700
@@ -98,7 +98,8 @@ end
 
 function love.draw()
 	-- For conciseness
-	rectangle = love.graphics.rectangle
+	local rectangle = love.graphics.rectangle
+	local size = block_size - 1
 
 	-- Display game over screen
 	if game_over then
@@ -129,7 +130,7 @@ function love.draw()
 		-- Draw individual snake blocks
 		for _, block in ipairs(snake) do
 			love.graphics.setColor(1, 1, 1)
-			rectangle("fill", block.x, block.y, block_size, block_size)
+			rectangle("fill", block.x, block.y, size, size)
 		end
 
 		-- Draw the food
