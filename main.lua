@@ -11,8 +11,7 @@ local random, generate_food, food_collision, snake_collision
 local WINDOW_DIMENSION = 700
 local WINDOW_BLOCKS = 20
 local INITIAL_SNAKE_SIZE = 3
-local SNAKE_SPEED = 9
-local DELAY_DURATION = 1 / SNAKE_SPEED
+local DELAY_DURATION = 0.15
 local MAP_EDGES = { start = 0, limit = WINDOW_DIMENSION }
 
 function love.load()
@@ -50,7 +49,10 @@ function love.update(dt)
 	timer = timer + dt
 
 	-- When the timer exceedes the duration, there is room for an update
-	while timer >= DELAY_DURATION do
+	if timer >= DELAY_DURATION then
+		-- Reset the timer
+		timer = 0
+
 		-- Create a new snake head
 		local snake_head = { x = snake[#snake].x, y = snake[#snake].y }
 
@@ -90,9 +92,6 @@ function love.update(dt)
 		-- Insert the new snake head and remove the tail
 		table.insert(snake, snake_head)
 		table.remove(snake, 1)
-
-		-- Substract one frame from the accumulated time
-		timer = timer - DELAY_DURATION
 	end
 end
 
