@@ -1,5 +1,5 @@
 -- Player
-local snake, block_size, direction, food
+local snake, block_size, direction_queue, food
 
 -- Game
 local timer, game_over
@@ -34,7 +34,7 @@ function love.load()
 	timer = 0
 
 	-- Initialize the snake's direction
-	direction = "right"
+	direction_queue = { "right" }
 
 	-- Initialize the food
 	food = {}
@@ -53,17 +53,21 @@ function love.update(dt)
 		-- Reset the timer
 		timer = 0
 
+		if #direction_queue > 1 then
+			table.remove(direction_queue, 1)
+		end
+
 		-- Create a new snake head
 		local snake_head = { x = snake[1].x, y = snake[1].y }
 
 		-- Move the new snake head based on the current direction
-		if direction == "right" then
+		if direction_queue[1] == "right" then
 			snake_head.x = add_movement(snake_head.x)
-		elseif direction == "left" then
+		elseif direction_queue[1] == "left" then
 			snake_head.x = substract_movement(snake_head.x)
-		elseif direction == "up" then
+		elseif direction_queue[1] == "up" then
 			snake_head.y = substract_movement(snake_head.y)
-		elseif direction == "down" then
+		elseif direction_queue[1] == "down" then
 			snake_head.y = add_movement(snake_head.y)
 		end
 
@@ -124,14 +128,18 @@ end
 
 -- Change the snake's direction based on user input
 function love.keypressed(key)
-	if key == "right" and direction ~= "left" then
-		direction = "right"
-	elseif key == "left" and direction ~= "right" then
-		direction = "left"
-	elseif key == "up" and direction ~= "down" then
-		direction = "up"
-	elseif key == "down" and direction ~= "up" then
-		direction = "down"
+	-- For conciseness
+	local q = direction_queue[#direction_queue]
+
+	-- Prevent input repetition or wrong moves
+	if key == "right" and q ~= "right" and q ~= "left" then
+		table.insert(direction_queue, "right")
+	elseif key == "left" and q ~= "left" and q ~= "right" then
+		table.insert(direction_queue, "left")
+	elseif key == "up" and q ~= "up" and q ~= "down" then
+		table.insert(direction_queue, "up")
+	elseif key == "down" and q ~= "down" and q ~= "up" then
+		table.insert(direction_queue, "down")
 	elseif key == "return" and game_over then
 		love.event.quit("restart")
 	end
