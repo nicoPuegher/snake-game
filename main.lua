@@ -5,7 +5,7 @@ local snake, block_size, direction_queue, food
 local timer, game_over
 
 -- Functions
-local add_movement, substract_movement, random, generate_food, food_collision, snake_collision
+local add_movement, substract_movement, generate_food, food_collision, snake_collision
 
 -- Constants
 local WINDOW_DIMENSION = 700
@@ -167,13 +167,11 @@ end
 
 function generate_food()
 	-- For conciseness
-	random = love.math.random
+	local random = love.math.random
 
 	-- Randomize a new location for the food
-	food.x = random(0, WINDOW_BLOCKS - 1)
-	food.y = random(0, WINDOW_BLOCKS - 1)
-	food.x = food.x * block_size
-	food.y = food.y * block_size
+	food.x = random(0, WINDOW_BLOCKS - 1) * block_size
+	food.y = random(0, WINDOW_BLOCKS - 1) * block_size
 
 	-- Prevent the new food to spawn on top of the snake
 	for _, block in ipairs(snake) do
