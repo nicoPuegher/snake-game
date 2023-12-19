@@ -8,9 +8,6 @@ Direction_queue = {}
 local timer
 Game_over = nil
 
--- Functions
-local food_collision, snake_collision
-
 -- Constants
 local WINDOW_DIMENSION = 700
 WINDOW_BLOCKS = 20
@@ -22,6 +19,7 @@ MAP_EDGES = { start = 0, limit = WINDOW_DIMENSION }
 local snake_movement = require("./modules/snake_movement")
 require("./modules/user_input")
 local generate_food = require("./modules/generate_food")
+local collision = require("./modules/collision")
 
 function love.load()
 	-- Set the window's size
@@ -81,10 +79,10 @@ function love.update(dt)
 		end
 
 		-- Check for collisions between the snake head and itself
-		snake_collision(snake_head.x, snake_head.y)
+		collision.snake(snake_head.x, snake_head.y)
 
 		-- Check for collisions between the snake and the food
-		food_collision(snake_head.x, snake_head.y)
+		collision.food(snake_head.x, snake_head.y)
 
 		-- Insert the new snake head and remove the tail
 		table.insert(Snake, 1, snake_head)
@@ -132,25 +130,5 @@ function love.draw()
 		-- Draw the food
 		love.graphics.setColor(0, 1, 0)
 		rectangle("fill", Food.x, Food.y, size, size)
-	end
-end
-
-function food_collision(x, y)
-	-- Make the snake bigger after eating the food
-	if x == Food.x and y == Food.y then
-		table.insert(Snake, { x = -Block_size * 2, y = -Block_size * 2 })
-
-		-- Generate a new food with a different position
-		generate_food()
-	end
-end
-
-function snake_collision(x, y)
-	-- Check if the snake hits itself
-	for _, block in ipairs(Snake) do
-		if x == block.x and y == block.y then
-			-- Game over
-			Game_over = true
-		end
 	end
 end
