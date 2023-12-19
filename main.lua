@@ -19,6 +19,7 @@ MAP_EDGES = { start = 0, limit = WINDOW_DIMENSION }
 require("./modules/user_input")
 local initialize = require("./modules/initialize")
 local update_snake = require("./modules/update_snake")
+local draw = require("./modules/draw")
 
 function love.load()
 	initialize()
@@ -35,44 +36,14 @@ function love.update(dt)
 end
 
 function love.draw()
-	-- For conciseness
-	local rectangle = love.graphics.rectangle
-	local size = Block_size - 1
-
 	-- Display game over screen
 	if Game_over then
-		-- Draw the game over title
-		love.graphics.setColor(1, 0, 0)
-		love.graphics.setFont(love.graphics.newFont(36))
-		love.graphics.printf(
-			"Game over, better luck next time!",
-			0,
-			WINDOW_DIMENSION / 2 - 50,
-			WINDOW_DIMENSION,
-			"center"
-		)
-
-		-- Draw the game over subtitle
-		love.graphics.setColor(1, 1, 1)
-		love.graphics.setFont(love.graphics.newFont(20))
-		love.graphics.printf(
-			"Please press Enter to restart and try again.",
-			0,
-			WINDOW_DIMENSION / 2 + 20,
-			WINDOW_DIMENSION,
-			"center"
-		)
+		draw.title()
+		draw.subtitle()
 
 	-- Game is not over
 	else
-		-- Draw individual snake blocks
-		for _, block in ipairs(Snake) do
-			love.graphics.setColor(1, 1, 1)
-			rectangle("fill", block.x, block.y, size, size)
-		end
-
-		-- Draw the food
-		love.graphics.setColor(0, 1, 0)
-		rectangle("fill", Food.x, Food.y, size, size)
+		draw.snake()
+		draw.food()
 	end
 end
