@@ -5,60 +5,34 @@ Block_size = nil
 Direction_queue = {}
 
 -- Game
-local timer
+Timer = nil
 Game_over = nil
 
 -- Constants
-local WINDOW_DIMENSION = 700
+WINDOW_DIMENSION = 700
 WINDOW_BLOCKS = 20
-local INITIAL_SNAKE_SIZE = 3
+INITIAL_SNAKE_SIZE = 3
 local DELAY_DURATION = 0.15
 MAP_EDGES = { start = 0, limit = WINDOW_DIMENSION }
 
 -- Helper modules
 local snake_movement = require("./modules/snake_movement")
 require("./modules/user_input")
-local generate_food = require("./modules/generate_food")
 local collision = require("./modules/collision")
+local initialize = require("./modules/initialize")
 
 function love.load()
-	-- Set the window's size
-	love.window.setMode(WINDOW_DIMENSION, WINDOW_DIMENSION)
-
-	-- Calculate the size of a single block of the snake's body
-	Block_size = WINDOW_DIMENSION / WINDOW_BLOCKS
-
-	-- Initialize the snake's body (head first, tale last)
-	Snake = {}
-	for i = INITIAL_SNAKE_SIZE, 1, -1 do
-		local snake_body = {}
-		snake_body.x = Block_size * (i - 1)
-		snake_body.y = Block_size - Block_size
-		table.insert(Snake, snake_body)
-	end
-
-	-- Initialize accumulative timer
-	timer = 0
-
-	-- Initialize the snake's direction
-	Direction_queue = { "right" }
-
-	-- Initialize the food
-	Food = {}
-	generate_food()
-
-	-- Initialize the game
-	Game_over = false
+	initialize()
 end
 
 function love.update(dt)
 	-- Accumulate time to control the speed of the snake
-	timer = timer + dt
+	Timer = Timer + dt
 
 	-- When the timer exceedes the duration, there is room for an update
-	if timer >= DELAY_DURATION then
+	if Timer >= DELAY_DURATION then
 		-- Reset the timer
-		timer = 0
+		Timer = 0
 
 		if #Direction_queue > 1 then
 			table.remove(Direction_queue, 1)
