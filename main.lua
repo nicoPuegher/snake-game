@@ -1,4 +1,4 @@
--- Player variables
+-- Player
 Snake = {}
 Food = {}
 Block_size = nil
@@ -16,10 +16,9 @@ local DELAY_DURATION = 0.15
 MAP_EDGES = { start = 0, limit = WINDOW_DIMENSION }
 
 -- Helper modules
-local snake_movement = require("./modules/snake_movement")
 require("./modules/user_input")
-local collision = require("./modules/collision")
 local initialize = require("./modules/initialize")
+local update_snake = require("./modules/update_snake")
 
 function love.load()
 	initialize()
@@ -31,36 +30,7 @@ function love.update(dt)
 
 	-- When the timer exceedes the duration, there is room for an update
 	if Timer >= DELAY_DURATION then
-		-- Reset the timer
-		Timer = 0
-
-		if #Direction_queue > 1 then
-			table.remove(Direction_queue, 1)
-		end
-
-		-- Create a new snake head
-		local snake_head = { x = Snake[1].x, y = Snake[1].y }
-
-		-- Move the new snake head based on the current direction
-		if Direction_queue[1] == "right" then
-			snake_head.x = snake_movement.add(snake_head.x)
-		elseif Direction_queue[1] == "left" then
-			snake_head.x = snake_movement.substract(snake_head.x)
-		elseif Direction_queue[1] == "up" then
-			snake_head.y = snake_movement.substract(snake_head.y)
-		elseif Direction_queue[1] == "down" then
-			snake_head.y = snake_movement.add(snake_head.y)
-		end
-
-		-- Check for collisions between the snake head and itself
-		collision.snake(snake_head.x, snake_head.y)
-
-		-- Check for collisions between the snake and the food
-		collision.food(snake_head.x, snake_head.y)
-
-		-- Insert the new snake head and remove the tail
-		table.insert(Snake, 1, snake_head)
-		table.remove(Snake)
+		update_snake()
 	end
 end
 
