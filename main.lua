@@ -122,7 +122,7 @@ function love.draw()
 
 		-- Draw the food
 		love.graphics.setColor(0, 1, 0)
-		rectangle("fill", food.x, food.y, block_size, block_size)
+		rectangle("fill", food.x, food.y, size, size)
 	end
 end
 
