@@ -1,32 +1,36 @@
--- Player
-local snake, block_size, direction_queue, food
+-- Player variables
+local snake, direction_queue, food
+Block_size = nil
 
 -- Game
 local timer, game_over
 
 -- Functions
-local add_movement, substract_movement, generate_food, food_collision, snake_collision
+local generate_food, food_collision, snake_collision
 
 -- Constants
 local WINDOW_DIMENSION = 700
 local WINDOW_BLOCKS = 20
 local INITIAL_SNAKE_SIZE = 3
 local DELAY_DURATION = 0.15
-local MAP_EDGES = { start = 0, limit = WINDOW_DIMENSION }
+MAP_EDGES = { start = 0, limit = WINDOW_DIMENSION }
+
+-- Helper modules
+local snake_movement = require("./modules/snake_movement")
 
 function love.load()
 	-- Set the window's size
 	love.window.setMode(WINDOW_DIMENSION, WINDOW_DIMENSION)
 
 	-- Calculate the size of a single block of the snake's body
-	block_size = WINDOW_DIMENSION / WINDOW_BLOCKS
+	Block_size = WINDOW_DIMENSION / WINDOW_BLOCKS
 
 	-- Initialize the snake's body (head first, tale last)
 	snake = {}
 	for i = INITIAL_SNAKE_SIZE, 1, -1 do
 		local snake_body = {}
-		snake_body.x = block_size * (i - 1)
-		snake_body.y = block_size - block_size
+		snake_body.x = Block_size * (i - 1)
+		snake_body.y = Block_size - Block_size
 		table.insert(snake, snake_body)
 	end
 
@@ -62,13 +66,13 @@ function love.update(dt)
 
 		-- Move the new snake head based on the current direction
 		if direction_queue[1] == "right" then
-			snake_head.x = add_movement(snake_head.x)
+			snake_head.x = snake_movement.add(snake_head.x)
 		elseif direction_queue[1] == "left" then
-			snake_head.x = substract_movement(snake_head.x)
+			snake_head.x = snake_movement.substract(snake_head.x)
 		elseif direction_queue[1] == "up" then
-			snake_head.y = substract_movement(snake_head.y)
+			snake_head.y = snake_movement.substract(snake_head.y)
 		elseif direction_queue[1] == "down" then
-			snake_head.y = add_movement(snake_head.y)
+			snake_head.y = snake_movement.add(snake_head.y)
 		end
 
 		-- Check for collisions between the snake head and itself
@@ -86,7 +90,7 @@ end
 function love.draw()
 	-- For conciseness
 	local rectangle = love.graphics.rectangle
-	local size = block_size - 1
+	local size = Block_size - 1
 
 	-- Display game over screen
 	if game_over then
@@ -145,33 +149,13 @@ function love.keypressed(key)
 	end
 end
 
--- Move the snake for right and down directions
-function add_movement(new_head)
-	new_head = new_head + block_size
-	-- Teleport the snake to the opposite side of the map
-	if new_head >= MAP_EDGES.limit then
-		new_head = MAP_EDGES.start
-	end
-	return new_head
-end
-
--- Move the snake for left and up directions
-function substract_movement(new_head)
-	new_head = new_head - block_size
-	-- Teleport the snake to the opposite side of the map
-	if new_head < MAP_EDGES.start then
-		new_head = MAP_EDGES.limit - block_size
-	end
-	return new_head
-end
-
 function generate_food()
 	-- For conciseness
 	local random = love.math.random
 
 	-- Randomize a new location for the food
-	food.x = random(0, WINDOW_BLOCKS - 1) * block_size
-	food.y = random(0, WINDOW_BLOCKS - 1) * block_size
+	food.x = random(0, WINDOW_BLOCKS - 1) * Block_size
+	food.y = random(0, WINDOW_BLOCKS - 1) * Block_size
 
 	-- Prevent the new food to spawn on top of the snake
 	for _, block in ipairs(snake) do
@@ -184,7 +168,7 @@ end
 function food_collision(x, y)
 	-- Make the snake bigger after eating the food
 	if x == food.x and y == food.y then
-		table.insert(snake, { x = -block_size * 2, y = -block_size * 2 })
+		table.insert(snake, { x = -Block_size * 2, y = -Block_size * 2 })
 
 		-- Generate a new food with a different position
 		generate_food()
