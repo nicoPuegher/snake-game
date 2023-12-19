@@ -1,9 +1,11 @@
 -- Player variables
-local snake, direction_queue, food
+local snake, food
 Block_size = nil
+Direction_queue = {}
 
 -- Game
-local timer, game_over
+local timer
+Game_over = nil
 
 -- Functions
 local generate_food, food_collision, snake_collision
@@ -17,6 +19,7 @@ MAP_EDGES = { start = 0, limit = WINDOW_DIMENSION }
 
 -- Helper modules
 local snake_movement = require("./modules/snake_movement")
+require("./modules/user_input")
 
 function love.load()
 	-- Set the window's size
@@ -38,14 +41,14 @@ function love.load()
 	timer = 0
 
 	-- Initialize the snake's direction
-	direction_queue = { "right" }
+	Direction_queue = { "right" }
 
 	-- Initialize the food
 	food = {}
 	generate_food()
 
 	-- Initialize the game
-	game_over = false
+	Game_over = false
 end
 
 function love.update(dt)
@@ -57,21 +60,21 @@ function love.update(dt)
 		-- Reset the timer
 		timer = 0
 
-		if #direction_queue > 1 then
-			table.remove(direction_queue, 1)
+		if #Direction_queue > 1 then
+			table.remove(Direction_queue, 1)
 		end
 
 		-- Create a new snake head
 		local snake_head = { x = snake[1].x, y = snake[1].y }
 
 		-- Move the new snake head based on the current direction
-		if direction_queue[1] == "right" then
+		if Direction_queue[1] == "right" then
 			snake_head.x = snake_movement.add(snake_head.x)
-		elseif direction_queue[1] == "left" then
+		elseif Direction_queue[1] == "left" then
 			snake_head.x = snake_movement.substract(snake_head.x)
-		elseif direction_queue[1] == "up" then
+		elseif Direction_queue[1] == "up" then
 			snake_head.y = snake_movement.substract(snake_head.y)
-		elseif direction_queue[1] == "down" then
+		elseif Direction_queue[1] == "down" then
 			snake_head.y = snake_movement.add(snake_head.y)
 		end
 
@@ -93,7 +96,7 @@ function love.draw()
 	local size = Block_size - 1
 
 	-- Display game over screen
-	if game_over then
+	if Game_over then
 		-- Draw the game over title
 		love.graphics.setColor(1, 0, 0)
 		love.graphics.setFont(love.graphics.newFont(36))
@@ -130,25 +133,6 @@ function love.draw()
 	end
 end
 
--- Change the snake's direction based on user input
-function love.keypressed(key)
-	-- For conciseness
-	local q = direction_queue[#direction_queue]
-
-	-- Prevent input repetition or wrong moves
-	if key == "right" and q ~= "right" and q ~= "left" then
-		table.insert(direction_queue, "right")
-	elseif key == "left" and q ~= "left" and q ~= "right" then
-		table.insert(direction_queue, "left")
-	elseif key == "up" and q ~= "up" and q ~= "down" then
-		table.insert(direction_queue, "up")
-	elseif key == "down" and q ~= "down" and q ~= "up" then
-		table.insert(direction_queue, "down")
-	elseif key == "return" and game_over then
-		love.event.quit("restart")
-	end
-end
-
 function generate_food()
 	-- For conciseness
 	local random = love.math.random
@@ -180,7 +164,7 @@ function snake_collision(x, y)
 	for _, block in ipairs(snake) do
 		if x == block.x and y == block.y then
 			-- Game over
-			game_over = true
+			Game_over = true
 		end
 	end
 end
