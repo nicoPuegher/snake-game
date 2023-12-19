@@ -1,5 +1,6 @@
 -- Player variables
-local snake, food
+Snake = {}
+Food = {}
 Block_size = nil
 Direction_queue = {}
 
@@ -8,11 +9,11 @@ local timer
 Game_over = nil
 
 -- Functions
-local generate_food, food_collision, snake_collision
+local food_collision, snake_collision
 
 -- Constants
 local WINDOW_DIMENSION = 700
-local WINDOW_BLOCKS = 20
+WINDOW_BLOCKS = 20
 local INITIAL_SNAKE_SIZE = 3
 local DELAY_DURATION = 0.15
 MAP_EDGES = { start = 0, limit = WINDOW_DIMENSION }
@@ -20,6 +21,7 @@ MAP_EDGES = { start = 0, limit = WINDOW_DIMENSION }
 -- Helper modules
 local snake_movement = require("./modules/snake_movement")
 require("./modules/user_input")
+local generate_food = require("./modules/generate_food")
 
 function love.load()
 	-- Set the window's size
@@ -29,12 +31,12 @@ function love.load()
 	Block_size = WINDOW_DIMENSION / WINDOW_BLOCKS
 
 	-- Initialize the snake's body (head first, tale last)
-	snake = {}
+	Snake = {}
 	for i = INITIAL_SNAKE_SIZE, 1, -1 do
 		local snake_body = {}
 		snake_body.x = Block_size * (i - 1)
 		snake_body.y = Block_size - Block_size
-		table.insert(snake, snake_body)
+		table.insert(Snake, snake_body)
 	end
 
 	-- Initialize accumulative timer
@@ -44,7 +46,7 @@ function love.load()
 	Direction_queue = { "right" }
 
 	-- Initialize the food
-	food = {}
+	Food = {}
 	generate_food()
 
 	-- Initialize the game
@@ -65,7 +67,7 @@ function love.update(dt)
 		end
 
 		-- Create a new snake head
-		local snake_head = { x = snake[1].x, y = snake[1].y }
+		local snake_head = { x = Snake[1].x, y = Snake[1].y }
 
 		-- Move the new snake head based on the current direction
 		if Direction_queue[1] == "right" then
@@ -85,8 +87,8 @@ function love.update(dt)
 		food_collision(snake_head.x, snake_head.y)
 
 		-- Insert the new snake head and remove the tail
-		table.insert(snake, 1, snake_head)
-		table.remove(snake)
+		table.insert(Snake, 1, snake_head)
+		table.remove(Snake)
 	end
 end
 
@@ -122,37 +124,21 @@ function love.draw()
 	-- Game is not over
 	else
 		-- Draw individual snake blocks
-		for _, block in ipairs(snake) do
+		for _, block in ipairs(Snake) do
 			love.graphics.setColor(1, 1, 1)
 			rectangle("fill", block.x, block.y, size, size)
 		end
 
 		-- Draw the food
 		love.graphics.setColor(0, 1, 0)
-		rectangle("fill", food.x, food.y, size, size)
-	end
-end
-
-function generate_food()
-	-- For conciseness
-	local random = love.math.random
-
-	-- Randomize a new location for the food
-	food.x = random(0, WINDOW_BLOCKS - 1) * Block_size
-	food.y = random(0, WINDOW_BLOCKS - 1) * Block_size
-
-	-- Prevent the new food to spawn on top of the snake
-	for _, block in ipairs(snake) do
-		if block.x == food.x and block.y == food.y then
-			generate_food()
-		end
+		rectangle("fill", Food.x, Food.y, size, size)
 	end
 end
 
 function food_collision(x, y)
 	-- Make the snake bigger after eating the food
-	if x == food.x and y == food.y then
-		table.insert(snake, { x = -Block_size * 2, y = -Block_size * 2 })
+	if x == Food.x and y == Food.y then
+		table.insert(Snake, { x = -Block_size * 2, y = -Block_size * 2 })
 
 		-- Generate a new food with a different position
 		generate_food()
@@ -161,7 +147,7 @@ end
 
 function snake_collision(x, y)
 	-- Check if the snake hits itself
-	for _, block in ipairs(snake) do
+	for _, block in ipairs(Snake) do
 		if x == block.x and y == block.y then
 			-- Game over
 			Game_over = true
