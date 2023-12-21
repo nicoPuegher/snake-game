@@ -1,6 +1,9 @@
 local generate_food = require("./modules/generate_food")
 
 local function initialize()
+	-- Set the window's name
+	love.window.setTitle("Snake Game")
+
 	-- Set the window's size
 	love.window.setMode(WINDOW_DIMENSION, WINDOW_DIMENSION)
 
